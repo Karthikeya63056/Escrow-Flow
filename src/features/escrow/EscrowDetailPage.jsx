@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { formatCurrency, formatDate, formatRelative, getStatusColor } from "../../lib/utils";
 import { ESCROW_STATE_FLOW } from "../../lib/constants";
-import toast from "react-hot-toast";
 import {
   ArrowLeft, CheckCircle2, Clock, AlertTriangle, DollarSign,
   User, Shield, FileText, GitCommit, Sparkles,
@@ -25,7 +24,7 @@ const actionIcons = {
 
 export default function EscrowDetailPage() {
   const { id } = useParams();
-  const { getEscrow, approveMilestone, updateEscrowStatus } = useEscrowStore();
+  const { getEscrow, approveMilestone, updateEscrowStatus, fundEscrow } = useEscrowStore();
   const { user } = useAuthStore();
   const escrow = getEscrow(id);
 
@@ -45,7 +44,10 @@ export default function EscrowDetailPage() {
 
   const handleApprove = (ms) => {
     approveMilestone(escrow.id, ms.id);
-    toast.success(`Milestone "${ms.title}" approved — ${formatCurrency(ms.amount)} released!`);
+  };
+
+  const handleFund = () => {
+    fundEscrow(escrow.id);
   };
 
   return (
@@ -56,15 +58,25 @@ export default function EscrowDetailPage() {
           <Link to="/" className="text-xs text-gray-500 hover:text-neon transition-colors flex items-center gap-1 mb-3">
             <ArrowLeft className="w-3 h-3" /> Back to Dashboard
           </Link>
-          <h1 className="text-2xl font-bold text-white">{escrow.title}</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl font-bold text-white">{escrow.title}</h1>
+            {escrow.streamingEnabled && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-neon-purple/10 text-neon-purple border border-neon-purple/20 font-medium">⚡ Streaming</span>
+            )}
+          </div>
           <p className="text-sm text-gray-400 mt-1 max-w-xl">{escrow.description}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusColor(escrow.status)}`}>
             {escrow.status.replace("_", " ").toUpperCase()}
           </span>
+          {escrow.status === "created" && user?.id === escrow.buyer.id && (
+            <Button size="sm" onClick={handleFund}>
+              <DollarSign className="w-3.5 h-3.5" /> Fund Escrow
+            </Button>
+          )}
           {escrow.status === "in_progress" && user?.id === escrow.buyer.id && (
-            <Button variant="danger" size="sm" onClick={() => { updateEscrowStatus(escrow.id, "disputed"); toast.error("Dispute opened"); }}>
+            <Button variant="danger" size="sm" onClick={() => { updateEscrowStatus(escrow.id, "disputed"); }}>
               <AlertTriangle className="w-3.5 h-3.5" /> Dispute
             </Button>
           )}
@@ -149,6 +161,22 @@ export default function EscrowDetailPage() {
                   </div>
                 </div>
               ))}
+              {escrow.observers?.length > 0 && (
+                <>
+                  <p className="text-[10px] text-gray-600 uppercase tracking-wider pt-2">Observers</p>
+                  {escrow.observers.map((o) => (
+                    <div key={o.id} className="flex items-center gap-3 p-3 rounded-xl bg-surface-2/20 border border-white/5">
+                      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center text-white text-xs font-bold">
+                        {o.name?.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-300">{o.name}</p>
+                        <p className="text-[10px] text-gray-600 uppercase tracking-wider">Observer (read-only)</p>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
 
             {/* Risk */}
