@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import { useUIStore } from "../../store";
 import {
   LayoutDashboard, FileText, PlusCircle, Shield, User,
-  ChevronLeft, ChevronRight, Sparkles, Search,
+  ChevronLeft, ChevronRight, Sparkles, Search, Globe,
 } from "lucide-react";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/escrows", icon: FileText, label: "Escrows" },
+  { to: "/explore", icon: Globe, label: "Explorer" },
   { to: "/create", icon: PlusCircle, label: "New Escrow" },
   { to: "/disputes", icon: Shield, label: "Disputes" },
   { to: "/profile", icon: User, label: "Profile" },

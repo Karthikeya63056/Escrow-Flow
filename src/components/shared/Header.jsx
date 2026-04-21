@@ -1,9 +1,11 @@
-import { useAuthStore, useUIStore } from "../../store";
-import { Bell, Search } from "lucide-react";
+import { useAuthStore, useUIStore, useNotificationStore } from "../../store";
+import { NotificationCenter } from "./NotificationCenter";
+import { Bell, Search, Sun, Moon } from "lucide-react";
 
 export function Header() {
   const { user } = useAuthStore();
-  const { toggleCommandPalette } = useUIStore();
+  const { toggleCommandPalette, toggleNotifications, theme, toggleTheme } = useUIStore();
+  const unreadCount = useNotificationStore((s) => s.unreadCount());
 
   return (
     <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 glass-strong sticky top-0 z-20">
@@ -16,18 +18,40 @@ export function Header() {
         <kbd className="ml-auto text-[10px] text-gray-600 bg-white/5 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
       </button>
 
-      <div className="flex items-center gap-4">
-        <button className="relative p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-neon animate-pulse" />
+      <div className="flex items-center gap-2">
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        >
+          {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
-        <div className="flex items-center gap-3 pl-4 border-l border-white/10">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon to-neon-purple flex items-center justify-center text-bg text-sm font-bold">
+
+        {/* Notifications */}
+        <div className="relative">
+          <button
+            onClick={toggleNotifications}
+            className="relative p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+          >
+            <Bell className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-neon text-bg text-[9px] font-bold flex items-center justify-center animate-pulse">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+          <NotificationCenter />
+        </div>
+
+        {/* User */}
+        <div className="flex items-center gap-3 pl-3 border-l border-white/10 ml-1">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon to-neon-purple flex items-center justify-center text-bg text-sm font-bold shadow-[0_0_12px_rgba(0,243,255,0.3)]">
             {user?.name?.charAt(0) || "U"}
           </div>
           <div className="hidden sm:block">
             <p className="text-sm font-medium text-white leading-none">{user?.name}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{user?.role}</p>
+            <p className="text-xs text-gray-500 mt-0.5 capitalize">{user?.role}</p>
           </div>
         </div>
       </div>
