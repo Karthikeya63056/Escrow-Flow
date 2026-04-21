@@ -12,6 +12,9 @@ const DisputeCenterPage = lazy(() => import("../features/disputes/DisputeCenterP
 const ProfilePage = lazy(() => import("../features/profile/ProfilePage"));
 const AuthPage = lazy(() => import("../features/auth/AuthPage"));
 const SystemsPage = lazy(() => import("../features/systems/SystemsPage"));
+const LandingPage = lazy(() => import("../features/marketing/LandingPage"));
+const PricingPage = lazy(() => import("../features/marketing/PricingPage"));
+const WalletPage = lazy(() => import("../features/wallet/WalletPage"));
 
 function PageLoader() {
   return (
@@ -38,8 +41,11 @@ export function Router() {
           <Route path="/explore" element={<EscrowExplorerPage />} />
           <Route path="/create" element={<RouteGuard requiredPermission="create_escrow"><CreateEscrowPage /></RouteGuard>} />
           <Route path="/disputes" element={<RouteGuard><DisputeCenterPage /></RouteGuard>} />
-          <Route path="/profile" element={<RouteGuard><ProfilePage /></RouteGuard>} />
+          <Route path="/wallet" element={<RouteGuard><WalletPage /></RouteGuard>} />
           <Route path="/systems" element={<RouteGuard><SystemsPage /></RouteGuard>} />
+          <Route path="/profile" element={<RouteGuard><ProfilePage /></RouteGuard>} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </AnimatePresence>
