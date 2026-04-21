@@ -11,6 +11,7 @@ const EscrowExplorerPage = lazy(() => import("../features/escrow/EscrowExplorerP
 const DisputeCenterPage = lazy(() => import("../features/disputes/DisputeCenterPage"));
 const ProfilePage = lazy(() => import("../features/profile/ProfilePage"));
 const AuthPage = lazy(() => import("../features/auth/AuthPage"));
+const SystemsPage = lazy(() => import("../features/systems/SystemsPage"));
 
 function PageLoader() {
   return (
@@ -38,6 +39,7 @@ export function Router() {
           <Route path="/create" element={<RouteGuard requiredPermission="create_escrow"><CreateEscrowPage /></RouteGuard>} />
           <Route path="/disputes" element={<RouteGuard><DisputeCenterPage /></RouteGuard>} />
           <Route path="/profile" element={<RouteGuard><ProfilePage /></RouteGuard>} />
+          <Route path="/systems" element={<RouteGuard><SystemsPage /></RouteGuard>} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </AnimatePresence>
